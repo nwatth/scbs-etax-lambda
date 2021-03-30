@@ -1,0 +1,14 @@
+{
+  "profiles": {
+    "Report": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "DATABASE": "scbs-paperless-db",
+        "HOST": "scbs-paperless.cbgrcz6dvlbe.ap-southeast-1.rds.amazonaws.com",
+        "PASSWORD": "7tmkmx7aXO",
+        "USER": "scbs_pg_user",
+        "PORT": "5432"
+      }
+    }
+  }
+}
