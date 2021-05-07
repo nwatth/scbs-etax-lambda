@@ -48,7 +48,7 @@ namespace EmailNotify
             {
                 var header = headerExtract(data);
                 header.MessageId = msgId;
-                if (header.ExecutionCutoffTime is null) {
+                if (!header.ExecutionCutoffTime.HasValue) {
                     header.ExecutionCutoffTime = header.DataDate.AddMinutes(cutoff);
                 }
 
@@ -87,7 +87,7 @@ namespace EmailNotify
             }
             else
             {
-                await LogToDB(json, header, "CO_SUCCESS", $"cutoff: {header.ExecutionCutoffTime.ToString("dd/MM/yyyy HH:mm:ss")} current: {now.ToString("dd/MM/yyyy HH:mm:ss")}");
+                await LogToDB(json, header, "CO_SUCCESS", $"cutoff: {header.ExecutionCutoffTime.Value.ToString("dd/MM/yyyy HH:mm:ss")} current: {now.ToString("dd/MM/yyyy HH:mm:ss")}");
             }
 
             //await LogToDB(json, header, "SUCCESS", null);
@@ -211,7 +211,7 @@ namespace EmailNotify
         public int JobExecutionId { get; set; }
         public string MessageId { get; set; }
         public string AccountNumber { get; set; }
-        public DateTime ExecutionCutoffTime { get; set; }
+        public DateTime? ExecutionCutoffTime { get; set; }
     }
   
 }
