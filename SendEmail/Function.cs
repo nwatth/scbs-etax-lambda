@@ -111,8 +111,8 @@ namespace SendEmail
             message.Headers.Add("JobExecutionId", $"{data.JobExecutionId}");
             message.Headers.Add("AccountNumber", $"{data.AccountNumber}");
 
-            if (data.ExecutionCutoffTime is not null) {
-                message.Headers.Add("ExecutionCutoffTime", data.ExecutionCutoffTime)
+            if (data.ExecutionCutoffTime != null) {
+                message.Headers.Add("ExecutionCutoffTime", data.ExecutionCutoffTime);
             }
 
             message.From.Add(from);
