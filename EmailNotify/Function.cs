@@ -20,8 +20,6 @@ namespace EmailNotify
         static int cutoff = int.Parse(Utility.Env("CUTOFF_TIME"));
         static DateTime now = DateTime.MinValue;
 
-        static DateTime cutOfTime = DateTime.MinValue;
-
         /// <summary>
         /// A simple function that takes a string and does a ToUpper
         /// </summary>
@@ -50,7 +48,9 @@ namespace EmailNotify
             {
                 var header = headerExtract(data);
                 header.MessageId = msgId;
-                cutOfTime = header.DataDate.AddMinutes(cutoff);
+                if (!header.ExecutionCutoffTime.HasValue) {
+                    header.ExecutionCutoffTime = header.DataDate.AddMinutes(cutoff);
+                }
 
                 var state = data.GetProperty("notificationType").GetString();
 
@@ -81,13 +81,13 @@ namespace EmailNotify
         private async Task Delivery(string json,Header header)
         {
             
-            if (cutOfTime >= now)
+            if (header.ExecutionCutoffTime >= now)
             {
                 await LogToDB(json, header, "SUCCESS", null);
             }
             else
             {
-                await LogToDB(json, header, "CO_SUCCESS", $"cutoff: {cutOfTime.ToString("dd/MM/yyyy HH:mm:ss")} current: {now.ToString("dd/MM/yyyy HH:mm:ss")}");
+                await LogToDB(json, header, "CO_SUCCESS", $"cutoff: {header.ExecutionCutoffTime.Value.ToString("dd/MM/yyyy HH:mm:ss")} current: {now.ToString("dd/MM/yyyy HH:mm:ss")}");
             }
 
             //await LogToDB(json, header, "SUCCESS", null);
@@ -100,7 +100,7 @@ namespace EmailNotify
             var subType = bounce.GetProperty("bounceSubType").GetString();
             
 
-            if (cutOfTime >= now)
+            if (header.ExecutionCutoffTime >= now)
             {
                 await LogToDB(json, header, "BOUNCE", $"{type}:{subType}");
             }
@@ -135,6 +135,15 @@ namespace EmailNotify
                 else if (name == "AccountNumber")
                 {
                     header.AccountNumber = item.GetProperty("value").GetString();
+                }
+                else if (name == "ExecutionCutoffTime")
+                {
+                    try {
+                        header.ExecutionCutoffTime = DateTime.ParseExact(item.GetProperty("value").GetString(), "yyyy-MM-dd HH:mm", null);
+                    }
+                    catch (FormatException) {
+                        header.ExecutionCutoffTime = null;
+                    }
                 }
             }
             return header;
@@ -202,6 +211,7 @@ namespace EmailNotify
         public int JobExecutionId { get; set; }
         public string MessageId { get; set; }
         public string AccountNumber { get; set; }
+        public DateTime? ExecutionCutoffTime { get; set; }
     }
   
 }
