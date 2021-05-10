@@ -206,6 +206,8 @@ namespace EmailStatus
                                       data_date
                                     FROM 
                                       public.job_step_execution 
+                                    WHERE
+                                      document_type = 'SDC' AND product = 'EQUITY'  
                                       ORDER BY data_date DESC LIMIT 1;";
 
             using (var conn = await Utility.CreateConnection())
@@ -230,7 +232,7 @@ namespace EmailStatus
                                                             PARTITION BY account 
                                                             ORDER BY id DESC) AS num 
                                                  FROM   public.job_step_execution
-                                                 WHERE  step_name = 'SENDING_EMAIL' OR step_name = 'SENT_EMAIL' )
+                                                 WHERE  step_name = 'SENDING_EMAIL' OR step_name = 'SENT_EMAIL' AND document_type = 'SDC' AND product = 'EQUITY' )
                                         SELECT * 
                                         FROM   data 
                                         WHERE  num = 1
@@ -276,7 +278,7 @@ namespace EmailStatus
                                                         message_payload,
                                                         status
                                                  FROM   public.job_step_execution
-                                                 WHERE  step_name = 'SENDING_EMAIL' AND account IN ({accountSB.Remove(0, 1)})";
+                                                 WHERE  step_name = 'SENDING_EMAIL' AND document_type = 'SDC' AND product = 'EQUITY' AND account IN ({accountSB.Remove(0, 1)})";
                 using (var reader = conn.ExecuteReader(sql))
                 {
                     

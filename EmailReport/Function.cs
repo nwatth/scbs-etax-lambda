@@ -15,26 +15,37 @@ using Amazon.SimpleEmail.Model;
 using MimeKit;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
-using System.Linq;
 
 // Assembly attribute to enable the Lambda function's JSON input to be converted into a .NET class.
 [assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.SystemTextJson.DefaultLambdaJsonSerializer))]
 
 namespace EmailReport
 {
+    public class FunctionInput
+    {
+        public string inputYear { get; set; }
+        public string inputRunDate { get; set; }
+    }
+
     public class Function
     {
         static int year = 0;
+        static DateTime dataDate = DateTime.MinValue;
         static RegionEndpoint region = RegionEndpoint.APSoutheast1;
-        public async Task<string> FunctionHandler(string input, ILambdaContext context)
+        public async Task<string> FunctionHandler(FunctionInput input, ILambdaContext context)
         {
-            if (string.IsNullOrEmpty(input))
+            if (string.IsNullOrEmpty(input.inputYear))
             {
                 year = DateTime.Now.Year;
             }
             else
             {
-                year = int.Parse(input);
+                year = int.Parse(input.inputYear);
+            }
+
+            if (!string.IsNullOrEmpty(input.inputRunDate))
+            {
+                dataDate = DateTime.ParseExact(input.inputRunDate, "yyyy-MM-dd", null);
             }
 
             var dataSummary = LoadSummary();
@@ -52,7 +63,7 @@ namespace EmailReport
 
             if (date != DateTime.MinValue)
             {
-                var dataBounce = LoadBounce();
+                var dataBounce = LoadBounce(dataDate);
                 var branch = LoadBranch();
                 var streamSummary = ReportSummary(dataSummary.Result, dateFile);
 
@@ -267,7 +278,7 @@ namespace EmailReport
             }
         }
 
-        public static async Task<List<Bounce>> LoadBounce()
+        public static async Task<List<Bounce>> LoadBounce(DateTime dataDate)
         {
             var account = "";
             var doc = "";
@@ -289,7 +300,8 @@ namespace EmailReport
                                                             PARTITION BY account 
                                                             ORDER BY id DESC) AS num 
                                                  FROM   public.job_step_execution
-                                                 WHERE (step_name = 'SENDING_EMAIL' OR step_name = 'SENT_EMAIL' OR step_name = 'STATUS_EMAIL') AND status != 'CO_SUCCESS' AND status != 'CO_BOUNCE' )
+                                                 WHERE (step_name = 'SENDING_EMAIL' OR step_name = 'SENT_EMAIL' OR step_name = 'STATUS_EMAIL') 
+                                                 AND status != 'CO_SUCCESS' AND status != 'CO_BOUNCE' AND document_type = 'SDC' AND product = 'EQUITY' AND data_date = '{dataDate}')
                                         SELECT * 
                                         FROM   data 
                                         WHERE  num = 1
@@ -355,7 +367,7 @@ namespace EmailReport
                                       message_payload#>>'{{documentMeta,marketingInfo,marketingId}}' as mkt_id,
                                       message_payload#>>'{{documentMeta,marketingInfo,teamId}}' as team_id
                                     FROM  public.job_step_execution 
-                                    WHERE step_name = 'SENDING_EMAIL' AND account IN ({accounts.Remove(0, 1)})";
+                                    WHERE step_name = 'SENDING_EMAIL' AND document_type = 'SDC' AND product = 'EQUITY' AND account IN ({accounts.Remove(0, 1)})";
 
                     using (var reader = await conn.ExecuteReaderAsync(sql))
                     {
@@ -407,7 +419,9 @@ namespace EmailReport
                                       success_num,
                                       fail_num
                                     FROM 
-                                      public.email_status_summary";
+                                      public.email_status_summary
+                                    WHERE
+                                      document_type = 'SDC' ";
 
             using (var conn = await Utility.CreateConnection())
             using (var reader = await conn.ExecuteReaderAsync(sql))
@@ -460,7 +474,7 @@ namespace EmailReport
 
         private static async Task<DateTime> StartSendEmail()
         {
-            var sql = $"SELECT create_datetime FROM public.job_step_execution WHERE step_name='SENDING_EMAIL' ORDER BY id LIMIT 1";
+            var sql = $"SELECT create_datetime FROM public.job_step_execution WHERE step_name='SENDING_EMAIL' AND document_type = 'SDC' AND product = 'EQUITY' ORDER BY id LIMIT 1";
             using (var conn = await Utility.CreateConnection())
             {
                 var result = await conn.ExecuteScalarAsync(sql);
