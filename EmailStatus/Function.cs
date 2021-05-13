@@ -232,7 +232,7 @@ namespace EmailStatus
                                                             PARTITION BY account 
                                                             ORDER BY id DESC) AS num 
                                                  FROM   public.job_step_execution
-                                                 WHERE  step_name = 'SENDING_EMAIL' OR step_name = 'SENT_EMAIL' AND document_type = 'SDC' AND product = 'EQUITY' )
+                                                 WHERE  (step_name = 'SENDING_EMAIL' OR step_name = 'SENT_EMAIL') AND document_type = 'SDC' AND product = 'EQUITY' )
                                         SELECT * 
                                         FROM   data 
                                         WHERE  num = 1
