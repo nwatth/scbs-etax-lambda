@@ -1,7 +1,7 @@
 #!groovy
 
 library 'etax-jenkins-libraries'
-deployLamda(
+deployDotnetLambda(
     emailReceiver: 'chayakorn.taktuan@scb.co.th',
     environment: 'sit',
     fileName: 'EmailReport.zip',
