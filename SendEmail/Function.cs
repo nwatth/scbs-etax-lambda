@@ -112,6 +112,7 @@ namespace SendEmail
             message.Headers.Add("AccountNumber", $"{data.AccountNumber}");
 
             if (data.ExecutionCutoffTime != null) {
+                Console.WriteLine(data.ExecutionCutoffTime);
                 message.Headers.Add("ExecutionCutoffTime", data.ExecutionCutoffTime);
             }
 
