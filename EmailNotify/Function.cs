@@ -28,7 +28,7 @@ namespace EmailNotify
         /// <returns></returns>
         public async Task FunctionHandler(SNSEvent snsEvent, ILambdaContext context)
         {
-            now = DateTime.Now;
+            now = DateTime.Now.AddHours(7.0);
             foreach (var item in snsEvent.Records)
             {
                 await Process(item.Sns.Message);
