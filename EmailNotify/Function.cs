@@ -83,8 +83,6 @@ namespace EmailNotify
             
             if (header.ExecutionCutoffTime >= now)
             {
-                Console.WriteLine(header.ExecutionCutoffTime);
-                Console.WriteLine(now);
                 await LogToDB(json, header, "SUCCESS", null);
             }
             else
