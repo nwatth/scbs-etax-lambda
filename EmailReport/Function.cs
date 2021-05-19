@@ -337,7 +337,7 @@ namespace EmailReport
                                 bounce.AoName = marketingInfo.GetProperty("marketingName").GetString();
                                 bounce.AoId = marketingInfo.GetProperty("marketingId").GetString();
                                 bounce.Team = marketingInfo.GetProperty("teamId").GetString() ?? "NA";
-                                bounce.Remark = status == "CO" ? "Email Not Response" : "Invalid Email";
+                                bounce.Remark = status == "CO" ? "Email Not Response" : status;
                                 bounce.DocType = doc;
                                 bounce.Date = reader.GetDateTime(6);
 
