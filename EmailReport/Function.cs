@@ -90,7 +90,7 @@ namespace EmailReport
 
                 var body = new BodyBuilder();
                 var sumarry = dataSummary.Result[date.Date];
-                var unknow = dataBounce.Result.Where(w=>w.Remark == "Email Not Response").Count();
+                var unknow = dataBounce.Result.Where(w=>w.Remark == "CO : No Response").Count();
                 body.HtmlBody = Html(dateThai, sendTime, sumarry.Success, sumarry.Fail - unknow, unknow);
                 
                 body.Attachments.Add($"report_summary_{dateFile}.xlsx", streamSummary.Result);
@@ -337,7 +337,14 @@ namespace EmailReport
                                 bounce.AoName = marketingInfo.GetProperty("marketingName").GetString();
                                 bounce.AoId = marketingInfo.GetProperty("marketingId").GetString();
                                 bounce.Team = marketingInfo.GetProperty("teamId").GetString() ?? "NA";
-                                bounce.Remark = status == "CO" ? "Email Not Response" : status;
+                                bounce.Remark = status == "CO" ? "CO : No Response" : status;
+
+                                if (status == "CO_SUCCESS") {
+                                    bounce.Remark = "CO : Response Success";
+                                } else if (status == "CO_BOUNCE") {
+                                    bounce.Remark = "CO : Response FAILED";
+                                }
+
                                 bounce.DocType = doc;
                                 bounce.Date = reader.GetDateTime(6);
 

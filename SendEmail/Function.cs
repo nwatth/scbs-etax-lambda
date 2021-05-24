@@ -200,7 +200,7 @@ namespace SendEmail
                                 <div> <span style='font-size:14.0pt'> <span style='font-family:cordia new,sans-serif'>
                                             &nbsp; </span> </span> </div>
                                 <div><span style='font-size:14.0pt'><span
-                                            style='font-family:cordia new,sans-serif'>To&nbsp;{data.DeliveryInfo.CustomerFullName}</span></span>
+                                            style='font-family:cordia new,sans-serif'>Dear&nbsp;{data.DeliveryInfo.CustomerFullName}</span></span>
                                 </div>
                                 <div> <span style='font-size:14.0pt'> <span style='font-family:cordia new,sans-serif'>
                                             SCB Securities Company Limited (“SCBS”) has attached your Confirmation
