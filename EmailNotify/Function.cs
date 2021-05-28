@@ -185,9 +185,11 @@ namespace EmailNotify
                                           'LAMBDA_SENT_EMAIL',
                                           now()
                                         );";
-                using (var conn = await Utility.CreateConnection())
-                {            
-                    await conn.ExecuteNonQueryAsync(sql);
+                if (header.DocumentType != "") {
+                    using (var conn = await Utility.CreateConnection())
+                    {            
+                        await conn.ExecuteNonQueryAsync(sql);
+                    }
                 }
             }
             catch (Exception ex)
