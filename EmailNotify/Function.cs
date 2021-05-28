@@ -185,7 +185,7 @@ namespace EmailNotify
                                           'LAMBDA_SENT_EMAIL',
                                           now()
                                         );";
-                if (header.DocumentType != "") {
+                if (!string.IsNullOrEmpty(header.DocumentType)) {
                     using (var conn = await Utility.CreateConnection())
                     {            
                         await conn.ExecuteNonQueryAsync(sql);
