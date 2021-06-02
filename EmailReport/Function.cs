@@ -284,6 +284,7 @@ namespace EmailReport
             var doc = "";
             var step = "";
             var status = "";
+            var noteRemark = "";
             try
             {
 
@@ -301,7 +302,7 @@ namespace EmailReport
                                                             ORDER BY id DESC) AS num 
                                                  FROM   public.job_step_execution
                                                  WHERE (step_name = 'SENDING_EMAIL' OR step_name = 'SENT_EMAIL' OR step_name = 'STATUS_EMAIL') 
-                                                 AND status != 'CO_SUCCESS' AND status != 'CO_BOUNCE' AND document_type = 'SDC' AND product = 'EQUITY' AND data_date = '{dataDate}')
+                                                 AND document_type = 'SDC' AND product = 'EQUITY' AND data_date = '{dataDate}')
                                         SELECT * 
                                         FROM   data 
                                         WHERE  num = 1
@@ -318,13 +319,18 @@ namespace EmailReport
 
                         step = reader.GetString(2);
                         status = reader.GetString(3);
+                        noteRemark = reader.GetString(5);
+
                         var check = (step == "SENT_EMAIL" && status == "SUCCESS") ? true : false;
 
                         if (!check)
                         {
                             account = reader.GetString(0);
                             doc = reader.GetString(1);
-                            if (step == "SENDING_EMAIL" || step == "STATUS_EMAIL")
+                            if (
+                                step == "SENDING_EMAIL" ||
+                                step == "STATUS_EMAIL" ||
+                                (step == "SENT_EMAIL" && status != "SUCCESS" ))
                             {
                                 var root = JsonDocument.Parse(reader.GetString(4)).RootElement;
                                 var documentMeta = root.GetProperty("documentMeta");
@@ -340,9 +346,9 @@ namespace EmailReport
                                 bounce.Remark = status == "CO" ? "CO : No Response" : status;
 
                                 if (status == "CO_SUCCESS") {
-                                    bounce.Remark = "CO : Response Success";
+                                    bounce.Remark = "CO : Response Success " + noteRemark;
                                 } else if (status == "CO_BOUNCE") {
-                                    bounce.Remark = "CO : Response FAILED";
+                                    bounce.Remark = "CO : Response FAILED " + noteRemark;
                                 }
 
                                 bounce.DocType = doc;
