@@ -77,7 +77,7 @@ namespace EmailReport
                 message.Subject = $"รายงานผลการส่ง Email งาน Daily - Equity รอบงาน {dateThai}";
 
                 message.From.Add(InternetAddress.Parse(Utility.Env("EMAIL_FROM")));
-                message.To.Add(InternetAddress.Parse("s92347@scb.co.th"));
+                message.To.Add(InternetAddress.Parse(Utility.Env("EMAIL_TO")));
                 var cc = Utility.Env("EMAIL_CC");
                 if (!string.IsNullOrEmpty(cc))
                 {
@@ -336,15 +336,10 @@ namespace EmailReport
 
                                 if (step == "SENT_EMAIL" && status != "SUCCESS") {
                                     var sqlQuery =  $@"SELECT message_payload FROM public.job_step_execution WHERE account = '{account}' AND step_name = 'SENDING_EMAIL' LIMIT 1";
-                                    var connectionEdok = await Utility.CreateConnection();
-                                    var sqlResult = await connectionEdok.ExecuteScalarAsync(sqlQuery);
-                                    var edok = sqlResult.ToString();                
-                                    Console.WriteLine("IS THIS FUCKING WORKING?");
-                                    Console.WriteLine(sqlResult);
-                                    Console.WriteLine(edok);
-
-                                    root = JsonDocument.Parse(edok).RootElement;
-
+                                    var pleasefindsomeonehandlingthisproject = await Utility.CreateConnection();
+                                    var sqlResult = await pleasefindsomeonehandlingthisproject.ExecuteScalarAsync(sqlQuery);
+                                    var iamjustnoobforcsharp = sqlResult.ToString();                
+                                    root = JsonDocument.Parse(iamjustnoobforcsharp).RootElement;
                                 }
 
                                 var documentMeta = root.GetProperty("documentMeta");
