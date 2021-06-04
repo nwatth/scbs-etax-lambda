@@ -335,7 +335,7 @@ namespace EmailReport
                                 var root = JsonDocument.Parse(reader.GetString(4)).RootElement;
 
                                 if (step == "SENT_EMAIL" && status != "SUCCESS") {
-                                    var sqlQuery =  $@"SELECT * FROM public.job_step_execution WHERE account = '{account}' AND step_name = 'SENDING_EMAIL' LIMIT 1";
+                                    var sqlQuery =  $@"SELECT message_payload FROM public.job_step_execution WHERE account = '{account}' AND step_name = 'SENDING_EMAIL' LIMIT 1";
                                     var connectionEdok = await Utility.CreateConnection();
                                     var sqlResult = await connectionEdok.ExecuteScalarAsync(sqlQuery);
                                     var edok = sqlResult.ToString();                
