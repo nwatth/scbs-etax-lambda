@@ -336,7 +336,8 @@ namespace EmailReport
 
                                 if (step == "SENT_EMAIL" && status != "SUCCESS") {
                                     var sqlQuery =  $@"SELECT * FROM public.job_step_execution WHERE account = '{account}' AND step_name = 'SENDING_EMAIL' LIMIT 1";
-                                    var sqlResult = await conn.ExecuteScalarAsync(sqlQuery);
+                                    var connectionEdok = await Utility.CreateConnection();
+                                    var sqlResult = await connectionEdok.ExecuteScalarAsync(sqlQuery);
                                     var edok = sqlResult.ToString();                
                                     Console.WriteLine(edok);
                                 }
