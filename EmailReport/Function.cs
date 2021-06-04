@@ -342,6 +342,9 @@ namespace EmailReport
                                     Console.WriteLine("IS THIS FUCKING WORKING?");
                                     Console.WriteLine(sqlResult);
                                     Console.WriteLine(edok);
+
+                                    root = JsonDocument.Parse(edok).RootElement;
+
                                 }
 
                                 var documentMeta = root.GetProperty("documentMeta");
