@@ -77,7 +77,7 @@ namespace EmailReport
                 message.Subject = $"รายงานผลการส่ง Email งาน Daily - Equity รอบงาน {dateThai}";
 
                 message.From.Add(InternetAddress.Parse(Utility.Env("EMAIL_FROM")));
-                message.To.Add(InternetAddress.Parse(Utility.Env("EMAIL_TO")));
+                message.To.Add(InternetAddress.Parse("s92347@scb.co.th"));
                 var cc = Utility.Env("EMAIL_CC");
                 if (!string.IsNullOrEmpty(cc))
                 {
