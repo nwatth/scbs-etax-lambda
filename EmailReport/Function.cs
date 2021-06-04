@@ -333,6 +333,14 @@ namespace EmailReport
                                 (step == "SENT_EMAIL" && status != "SUCCESS" ))
                             {
                                 var root = JsonDocument.Parse(reader.GetString(4)).RootElement;
+
+                                if (step == "SENT_EMAIL" && status != "SUCCESS") {
+                                    var sqlQuery =  $@"SELECT * FROM public.job_step_execution WHERE account = '{account}' AND step_name = 'SENDING_EMAIL' LIMIT 1";
+                                    var sqlResult = await conn.ExecuteScalarAsync(sqlQuery);
+                                    var edok = sqlResult.ToString();                
+                                    Console.WriteLine(edok);
+                                }
+
                                 var documentMeta = root.GetProperty("documentMeta");
                                 var deliveryInfo = documentMeta.GetProperty("deliveryInfo");
                                 var marketingInfo = documentMeta.GetProperty("marketingInfo");
