@@ -339,6 +339,8 @@ namespace EmailReport
                                     var connectionEdok = await Utility.CreateConnection();
                                     var sqlResult = await connectionEdok.ExecuteScalarAsync(sqlQuery);
                                     var edok = sqlResult.ToString();                
+                                    Console.WriteLine("IS THIS FUCKING WORKING?");
+                                    Console.WriteLine(sqlResult);
                                     Console.WriteLine(edok);
                                 }
 
