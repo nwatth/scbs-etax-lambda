@@ -319,10 +319,7 @@ namespace EmailReport
 
                         step = reader.GetString(2);
                         status = reader.GetString(3);
-
-                        if (reader.GetString(5) != null) {
-                            noteRemark = reader.GetString(5);
-                        }
+                        noteRemark = reader.IsDBNull(5) ? reader.GetString(5) : "";
 
                         var check = (step == "SENT_EMAIL" && status == "SUCCESS") ? true : false;
 
